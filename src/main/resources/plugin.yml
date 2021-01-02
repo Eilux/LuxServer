@@ -1,0 +1,12 @@
+name: Lux
+version: ${project.version}
+main: dev.bodner.jack.lux.Lux
+api-version: 1.16
+authors: [ Eilux ]
+description: Server stuff
+website: jack.bodner.dev
+commands:
+  ghost:
+    description: Makes the player invisible and fakes a logoff
+    usage: /<command>
+    permission:
