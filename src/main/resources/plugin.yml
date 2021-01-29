@@ -10,3 +10,8 @@ commands:
     description: Makes the player invisible and fakes a logoff
     usage: /<command>
     permission:
+
+  pvp:
+    description: Enables and disables PVP for the user
+    usage: /<command>
+    permission:

@@ -12,18 +12,16 @@ public class GhostCommand implements CommandExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(sender instanceof Player){
+        if(sender instanceof Player && sender.isOp()){
             Player player = (Player)sender;
-            if(Lux.ghosts.contains(player)){
+            if(Lux.ghostLocation.containsKey(player.getUniqueId())){
                 player.teleport(Lux.ghostLocation.get(player.getUniqueId()));
                 Bukkit.broadcastMessage(String.format("§e%s joined the game", player.getDisplayName()));
                 player.setGameMode(GameMode.CREATIVE);
-                Lux.ghosts.remove(player);
                 Lux.ghostLocation.remove(player.getUniqueId());
             }
             else {
                 Bukkit.broadcastMessage(String.format("§e%s left the game", player.getDisplayName()));
-                Lux.ghosts.add(player);
                 Lux.ghostLocation.put(player.getUniqueId(),player.getLocation());
                 player.setGameMode(GameMode.SPECTATOR);
             }
