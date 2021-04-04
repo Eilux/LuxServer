@@ -6,14 +6,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.bodner.jack.lux.commands.GhostCommand;
 import dev.bodner.jack.lux.commands.PVPCommand;
+import dev.bodner.jack.lux.commands.SetPVPCommand;
 import dev.bodner.jack.lux.json.PVPData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -98,9 +96,21 @@ public final class Lux extends JavaPlugin implements Listener {
             }
         }, 0L, 1L);
 
+//        scheduler.scheduleSyncRepeatingTask(this, () -> {
+//            for (Player player : Bukkit.getOnlinePlayers()){
+//                if (!noPVP.contains(player.getUniqueId())){
+//                    player.setDisplayName("§4\uD83D\uDDE1§r " + player.getDisplayName());
+//                }
+//            }
+//
+//        }, 0L, 1L);
+
+
+
         //command executors
         this.getCommand("ghost").setExecutor(new GhostCommand());
         this.getCommand("pvp").setExecutor(new PVPCommand());
+        this.getCommand("setpvp").setExecutor(new SetPVPCommand());
     }
 
     private boolean canPlayerHurt(Player target){
@@ -137,7 +147,14 @@ public final class Lux extends JavaPlugin implements Listener {
         /* Splash potion of harming triggers this event because it deals direct damage,
         but we will deal with that kind of stuff in PotionSplashEvent instead */
             return;
+        } else if(e.getDamager() instanceof Trident){
+            Trident trident = (Trident) e.getDamager();
+            if (!(trident.getShooter() instanceof Player)){
+                return;
+            }
+            attacker = (Player) trident.getShooter();
         }
+
 
         // It's possible to shoot yourself
         if(victim == attacker) {
@@ -205,6 +222,8 @@ public final class Lux extends JavaPlugin implements Listener {
             }
         }
     }
+
+
 
     @Override
     public void onDisable() {
