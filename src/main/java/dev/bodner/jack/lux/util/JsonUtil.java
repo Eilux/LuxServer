@@ -1,4 +1,4 @@
-package dev.bodner.jack.lux;
+package dev.bodner.jack.lux.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
 
-public class Util {
+public class JsonUtil {
 
     public static UUID getPlayerID(String name){
         Gson gson = new Gson();

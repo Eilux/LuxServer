@@ -1,7 +1,7 @@
 package dev.bodner.jack.lux.commands;
 
 import dev.bodner.jack.lux.Lux;
-import dev.bodner.jack.lux.Util;
+import dev.bodner.jack.lux.util.JsonUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class SetPVPCommand implements CommandExecutor {
                 sender.sendMessage("Invalid argument, must have two arguments");
                 return false;
             }
-            UUID id = Util.getPlayerID(args[1]);
+            UUID id = JsonUtil.getPlayerID(args[1]);
             if (id == null){
                 sender.sendMessage("Player not found");
                 return false;

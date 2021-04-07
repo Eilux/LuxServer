@@ -1,16 +1,22 @@
 package dev.bodner.jack.lux;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import dev.bodner.jack.lux.commands.GhostCommand;
 import dev.bodner.jack.lux.commands.PVPCommand;
 import dev.bodner.jack.lux.commands.SetPVPCommand;
 import dev.bodner.jack.lux.json.PVPData;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.PacketLoginOutSuccess;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,8 +27,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public final class Lux extends JavaPlugin implements Listener {
@@ -36,6 +45,7 @@ public final class Lux extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
 
         //config files and related nonsense
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -76,11 +86,13 @@ public final class Lux extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
 
-        //event for ghost
+        //event for tick involving all players
         getServer().getPluginManager().registerEvents(this, this);
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()){
+
+                //ghost part
                 for (Player player1 : Bukkit.getOnlinePlayers()) {
                     player.showPlayer(Lux.this, player1);
                 }
@@ -93,18 +105,64 @@ public final class Lux extends JavaPlugin implements Listener {
                         }
                     }
                 }));
+
+                //pvp part
+                if (!noPVP.contains(player.getUniqueId()) && !player.getPlayerListName().contains("\uD83D\uDDE1")){
+                    player.setPlayerListName("§4\uD83D\uDDE1§r" + player.getDisplayName());
+
+                    GameProfile profile = ((EntityPlayer)((CraftPlayer)player).getHandle()).getProfile();
+                    try {
+                        Field name = profile.getClass().getDeclaredField("name");
+                        name.setAccessible(true);
+                        Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(name, name.getModifiers() & ~Modifier.FINAL);
+
+                        name.set(profile,("§4\uD83D\uDDE1§r" + profile.getName()));
+
+                        List<Player> canSee = new ArrayList<>();
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            if (player1.canSee(player)) {
+                                canSee.add(player1);
+                                player1.hidePlayer(Lux.this,player);
+                            }
+                        }
+                        for (Player player1 : canSee) {
+                            player1.showPlayer(Lux.this,player);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (noPVP.contains(player.getUniqueId()) && player.getPlayerListName().contains("\uD83D\uDDE1")){
+                    player.setPlayerListName(player.getDisplayName().replaceAll("§4\uD83D\uDDE1§r",""));
+
+                    GameProfile profile = ((EntityPlayer)((CraftPlayer)player).getHandle()).getProfile();
+                    try {
+                        Field name = profile.getClass().getDeclaredField("name");
+                        name.setAccessible(true);
+                        Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(name, name.getModifiers() & ~Modifier.FINAL);
+
+                        name.set(profile,(profile.getName().replaceAll("§4\uD83D\uDDE1§r","")));
+
+                        List<Player> canSee = new ArrayList<>();
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            if (player1.canSee(player)) {
+                                canSee.add(player1);
+                                player1.hidePlayer(Lux.this,player);
+                            }
+                        }
+                        for (Player player1 : canSee) {
+                            player1.showPlayer(Lux.this,player);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }, 0L, 1L);
-
-//        scheduler.scheduleSyncRepeatingTask(this, () -> {
-//            for (Player player : Bukkit.getOnlinePlayers()){
-//                if (!noPVP.contains(player.getUniqueId())){
-//                    player.setDisplayName("§4\uD83D\uDDE1§r " + player.getDisplayName());
-//                }
-//            }
-//
-//        }, 0L, 1L);
-
 
 
         //command executors

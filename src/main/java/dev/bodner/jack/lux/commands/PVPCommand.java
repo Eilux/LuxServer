@@ -1,6 +1,7 @@
 package dev.bodner.jack.lux.commands;
 
 import dev.bodner.jack.lux.Lux;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ public class PVPCommand implements CommandExecutor {
             if (Lux.noPVP.contains(player.getUniqueId())){
                 sender.sendMessage("PVP Enabled");
                 Lux.noPVP.remove(player.getUniqueId());
+
             }
             else {
                 sender.sendMessage("PVP Disabled");
