@@ -1,4 +1,4 @@
-package dev.bodner.jack.lux;
+package dev.bodner.jack.lux.name;
 
 import com.mojang.authlib.GameProfile;
 

@@ -5,6 +5,7 @@ api-version: 1.16
 authors: [ Eilux ]
 description: Server stuff
 website: jack.bodner.dev
+depend: [ProtocolLib]
 commands:
   ghost:
     description: Makes the player invisible and fakes a logoff

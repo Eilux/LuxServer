@@ -1,11 +1,19 @@
 package dev.bodner.jack.lux.commands;
 
+import com.comphenix.protocol.events.PacketContainer;
 import dev.bodner.jack.lux.Lux;
 import dev.bodner.jack.lux.util.JsonUtil;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.UUID;
 
 public class SetPVPCommand implements CommandExecutor {
